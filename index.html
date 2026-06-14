@@ -1,66 +1,51 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Elite Time — curated luxury-inspired timepieces with secure checkout and direct support." />
-  <title>Elite Time — Luxury Timepieces</title>
+  <title>Elite Time — Modern Luxury Watches</title>
+  <meta name="description" content="Elite Time — modern luxury-inspired timepieces with premium feel, fast support, and secure checkout." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="grain"></div>
+  <div class="noise"></div>
   <header class="site-header" id="siteHeader">
-    <a class="brand" href="#home" data-link>
-      <img src="logo.jpeg" alt="Elite Time logo" onerror="this.style.display='none'">
-      <span><strong>Elite Time</strong><small>Luxury Timepieces</small></span>
+    <a class="brand" href="#/">
+      <img src="logo.jpeg" alt="Elite Time logo" />
+      <span><strong>Elite Time</strong><small>Modern Timepieces</small></span>
     </a>
-
     <nav class="desktop-nav">
-      <a href="#home" data-link>Home</a>
-      <a href="#products" data-link>All Watches</a>
-      <a href="#premium" data-link>Premium</a>
-      <a href="#shipping" data-link>Shipping</a>
-      <a href="#support" data-link>Support</a>
+      <a href="#/shop">Shop</a>
+      <a href="#/premium">Premium</a>
+      <a href="#/shipping">Shipping</a>
+      <a href="#/support">Support</a>
     </nav>
-
     <div class="header-actions">
-      <button class="icon-btn" id="themeToggle" aria-label="Toggle light and dark mode"><i class="fa-solid fa-circle-half-stroke"></i></button>
-      <a class="icon-btn cart-link" href="#cart" data-link aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count"></span></a>
-      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
+      <a class="cart-pill" href="#/cart"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span><b id="cartCount">0</b></a>
+      <button class="icon-btn mobile-only" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
     </div>
   </header>
 
-  <aside class="mobile-drawer" id="mobileDrawer">
-    <div class="drawer-top"><strong>Elite Time</strong><button class="icon-btn" id="menuClose"><i class="fa-solid fa-xmark"></i></button></div>
-    <a href="#home" data-link>Home</a>
-    <a href="#products" data-link>All Watches</a>
-    <a href="#premium" data-link>Premium</a>
-    <a href="#shipping" data-link>Shipping</a>
-    <a href="#secure" data-link>Secure Orders</a>
-    <a href="#support" data-link>Support</a>
-    <a href="#cart" data-link>Cart</a>
+  <aside class="mobile-drawer" id="drawer">
+    <div class="drawer-top"><strong>Elite Time</strong><button id="closeDrawer"><i class="fa-solid fa-xmark"></i></button></div>
+    <a href="#/">Home</a><a href="#/shop">Shop All</a><a href="#/premium">Premium</a><a href="#/secure">Secure Orders</a><a href="#/shipping">Shipping</a><a href="#/support">Support</a><a href="#/cart">Cart</a>
   </aside>
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
   <main id="app"></main>
 
+  <footer class="footer">
+    <div><h2>Elite Time</h2><p>Modern luxury-inspired watches with clean styling, bold presence, and direct support.</p></div>
+    <div class="footer-links"><a href="#/shop">Shop</a><a href="#/premium">Premium</a><a href="#/secure">Secure Orders</a><a href="#/shipping">Shipping</a><a href="#/support">Support</a></div>
+  </footer>
+
   <div class="toast" id="toast"></div>
-
-  <div class="modal" id="upsellModal" aria-hidden="true">
-    <div class="modal-card">
-      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
-      <p class="eyebrow">Added to cart</p>
-      <h3>Want to pair it with another piece?</h3>
-      <div class="modal-grid" id="upsellGrid"></div>
-      <a href="#cart" data-link class="btn primary full">View Cart</a>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
