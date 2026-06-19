@@ -1,4 +1,4 @@
-  /* =============================================
+/* =============================================
    ELITE TIME — MAIN SCRIPT
    ============================================= */
 
@@ -584,88 +584,739 @@ const products = {
   badge: "Best Seller"
 },
 };
-const $ = (s, el=document) => el.querySelector(s);
-const $$ = (s, el=document) => [...el.querySelectorAll(s)];
-const money = n => `$${Number(n).toLocaleString()}`;
-const allProducts = Object.values(products);
-const featured = allProducts.slice(0, 8);
-let currentFilter = 'all';
-let currentQty = 1;
-let currentImage = 0;
 
-function getCart(){try{return JSON.parse(localStorage.getItem('eliteTimeCart')||'[]')}catch{return []}}
-function saveCart(cart){localStorage.setItem('eliteTimeCart',JSON.stringify(cart));updateCartCount()}
-function updateCartCount(){const count=getCart().reduce((a,i)=>a+i.qty,0); const el=$('#cartCount'); if(el) el.textContent=count}
-function toast(msg){const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1900)}
-function addToCart(id,qty=1){const p=products[id]; if(!p)return; const cart=getCart(); const item=cart.find(i=>i.id===id); if(item)item.qty+=qty; else cart.push({id,qty}); saveCart(cart); toast(`${p.name} added to cart`)}
-function setRoute(path){location.hash=path}
-function route(){const hash=location.hash.replace('#','')||'/'; window.scrollTo(0,0); if(hash.startsWith('/product/')) return renderProduct(hash.split('/')[2]); if(hash==='/shop')return renderShop(); if(hash==='/cart')return renderCart(); if(hash==='/checkout')return renderCheckout(); if(hash==='/premium')return renderInfo('Premium Quality','fa-gem','Premium feel without the confusing luxury markup. Every piece is selected for wrist presence, finish, and everyday wear.',[['⚖️','Substantial weight','A confident feel on-wrist that does not feel cheap or hollow.'],['✨','Polished finish','Clean case and bracelet finishing with standout shine.'],['🔒','Secure clasp','Smooth locking clasp made for daily wear.'],['🕐','Reliable movement','Simple accurate quartz movement for easy ownership.']]); if(hash==='/shipping')return renderInfo('Shipping','fa-truck-fast','Orders are confirmed, packed, and updated with direct communication from Elite Time.',[['📦','Order confirmation','Every order is confirmed within 24 hours.'],['🚀','Fast dispatch','Orders are prepared after payment confirmation.'],['📬','Tracking updates','You receive tracking as soon as it is available.'],['💬','Direct communication','Questions get handled directly and quickly.']]); if(hash==='/secure')return renderInfo('Secure Orders','fa-shield-halved','Private, direct, and simple ordering with clear checkout steps.',[['🔐','Private information','Your personal details are never shared or sold.'],['💳','Trusted payment','Cash App and Zelle options are available.'],['🧾','Clear invoice','Every order shows a full breakdown before completion.'],['🤝','No confusion','You work directly with Elite Time.']]); if(hash==='/support')return renderSupport(); return renderHome()}
-function navActive(){closeDrawer(); updateCartCount()}
+/* =============================================
+   CART
+   ============================================= */
+function normalizeCart(cart) {
+  if (!Array.isArray(cart)) return [];
 
-function card(p){return `<a class="product-card" href="#/product/${p.id}"><div class="product-image"><img src="${p.images[0]}" alt="${p.name}"></div><span class="badge">${p.badge||'Elite'}</span><div class="product-info-card"><div class="product-title">${p.name}</div><div class="product-meta"><span>${p.category||'watch'} • ${p.stock} left</span><strong class="price">${money(p.price)}</strong></div></div></a>`}
+  if (cart.length > 0 && typeof cart[0] === "string") {
+    const counts = {};
+    cart.forEach((id) => { counts[id] = (counts[id] || 0) + 1; });
+    return Object.entries(counts).map(([id, quantity]) => ({
+      id,
+      quantity,
+      boxKit: false
+    }));
+  }
 
-function renderHome(){
-  const premium = allProducts.filter(p=>['moissanite','royal_oak','patek'].includes(p.category)).slice(0,4);
-  $('#app').innerHTML=`
-  <section class="hero">
-    <div class="hero-copy">
-      <div>
-        <div class="kicker">New Elite Time</div>
-        <h1>Built for the wrist that <em>gets noticed.</em></h1>
-        <p class="lead">A completely cleaner storefront for modern luxury-inspired timepieces — bold watch photos, easier navigation, softer cards, stronger contrast, and a more premium buying flow.</p>
-        <div class="hero-buttons"><a class="btn primary" href="#/shop"><i class="fa-solid fa-arrow-right"></i> Shop the Collection</a><a class="btn ghost" href="#/premium">Why Elite Time</a></div>
-      </div>
-      <div class="stats"><div class="stat"><b>${allProducts.length}</b><span>Styles</span></div><div class="stat"><b>$90+</b><span>Starting price</span></div><div class="stat"><b>Direct</b><span>Support</span></div></div>
+  return cart
+    .filter(item => item && typeof item.id === "string")
+    .map(item => ({
+      id: item.id,
+      quantity: Number(item.quantity) > 0 ? Number(item.quantity) : 1,
+      boxKit: Boolean(item.boxKit)
+    }));
+}
+
+function getCart() {
+  const raw = JSON.parse(localStorage.getItem("eliteTimeCart")) || [];
+  const normalized = normalizeCart(raw);
+  localStorage.setItem("eliteTimeCart", JSON.stringify(normalized));
+  return normalized;
+}
+
+function saveCart(cart) {
+  localStorage.setItem("eliteTimeCart", JSON.stringify(cart));
+}
+
+function updateCartCount() {
+  const cart = getCart();
+  const totalCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+
+  document.querySelectorAll(".cart-count").forEach((el) => {
+    const previous = Number(el.textContent) || 0;
+    if (totalCount <= 0) {
+      el.textContent = "";
+      el.style.display = "none";
+      return;
+    }
+    el.textContent = totalCount;
+    el.style.display = "flex";
+    if (totalCount > previous) {
+      el.classList.remove("cart-pop");
+      void el.offsetWidth;
+      el.classList.add("cart-pop");
+    }
+  });
+
+  document.querySelectorAll(".cart-btn").forEach((btn) => {
+    const current = totalCount;
+    const previous = Number(btn.dataset.prevCount || 0);
+    if (current > previous) {
+      btn.classList.remove("cart-icon-bounce");
+      void btn.offsetWidth;
+      btn.classList.add("cart-icon-bounce");
+    }
+    btn.dataset.prevCount = current;
+  });
+}
+
+function addToCart(productId) {
+  const cart = getCart();
+  const existing = cart.find(item => item.id === productId);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ id: productId, quantity: 1, boxKit: false });
+  }
+  saveCart(cart);
+  updateCartCount();
+  animateAddToCartButton(document.getElementById("addToCartBtn"));
+  playAddToCartSound();
+  showUpsellPopup(productId);
+}
+
+function removeFromCart(productId) {
+  let cart = getCart().filter(item => item.id !== productId);
+  saveCart(cart);
+  updateCartCount();
+  renderCartPage();
+  renderCheckoutSummary();
+}
+
+function increaseQuantity(productId) {
+  const cart = getCart();
+  const item = cart.find(i => i.id === productId);
+  if (!item) return;
+  item.quantity += 1;
+  saveCart(cart);
+  updateCartCount();
+  renderCartPage();
+  renderCheckoutSummary();
+}
+
+function decreaseQuantity(productId) {
+  let cart = getCart();
+  const item = cart.find(i => i.id === productId);
+  if (!item) return;
+  item.quantity -= 1;
+  if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+  saveCart(cart);
+  updateCartCount();
+  renderCartPage();
+  renderCheckoutSummary();
+}
+
+function toggleBoxKit(productId) {
+  const cart = getCart();
+  const item = cart.find(i => i.id === productId);
+  if (!item) return;
+
+  item.boxKit = !item.boxKit;
+
+  saveCart(cart);
+  renderCartPage();
+  renderCheckoutSummary();
+}
+
+/* =============================================
+   THEME
+   ============================================= */
+function getTheme() {
+  return localStorage.getItem("eliteTimeTheme") || "light";
+}
+
+function saveTheme(theme) {
+  localStorage.setItem("eliteTimeTheme", theme);
+}
+
+function initTheme() {
+  const body = document.body;
+  if (getTheme() === "dark") body.classList.add("dark-mode");
+
+  const themeToggle = document.getElementById("themeToggle");
+  if (!themeToggle) return;
+
+  themeToggle.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
+    saveTheme(body.classList.contains("dark-mode") ? "dark" : "light");
+  });
+}
+
+/* =============================================
+   SOUNDS
+   ============================================= */
+function playAddToCartSound() {
+  try {
+    const sound = new Audio("add.mp3");
+    sound.volume = 0.28;
+    sound.currentTime = 0;
+    setTimeout(() => sound.play().catch(() => {}), 70);
+  } catch (e) {}
+}
+
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+function animateAddToCartButton(button) {
+  if (!button) return;
+  button.classList.remove("cart-burst");
+  void button.offsetWidth;
+  button.classList.add("cart-burst");
+
+  for (let i = 0; i < 6; i++) {
+    const sparkle = document.createElement("span");
+    sparkle.className = "sparkle";
+    sparkle.textContent = "✦";
+    const angle = (Math.PI * 2 * i) / 6;
+    const x = Math.cos(angle) * 55;
+    const y = Math.sin(angle) * 55;
+    sparkle.style.setProperty("--x", `${x}px`);
+    sparkle.style.setProperty("--y", `${y}px`);
+    button.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 700);
+  }
+}
+
+/* =============================================
+   UPSELL POPUP
+   ============================================= */
+function showUpsellPopup(currentProductId) {
+  const popup = document.getElementById("upsellPopup");
+  const grid = document.getElementById("upsellPopupGrid");
+  const closeBtn = document.getElementById("upsellClose");
+  if (!popup || !grid) return;
+
+  grid.innerHTML = "";
+  Object.values(products)
+    .filter(product => product.id !== currentProductId)
+    .slice(0, 2)
+    .forEach(product => {
+      const card = document.createElement("a");
+      card.href = `product.html?id=${product.id}`;
+      card.className = "upsell-mini-card";
+      card.innerHTML = `
+        <img src="${product.images[0]}" alt="${product.name}">
+        <div class="upsell-mini-info">
+          <h4>${product.name}</h4>
+          <p>$${product.price}</p>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+  popup.classList.add("show");
+
+  if (closeBtn && !closeBtn.dataset.bound) {
+    closeBtn.addEventListener("click", () => popup.classList.remove("show"));
+    closeBtn.dataset.bound = "true";
+  }
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) popup.classList.remove("show");
+  });
+}
+
+/* =============================================
+   PRODUCT PAGE
+   ============================================= */
+function renderProductPage() {
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get("id");
+  if (!productId || !products[productId]) return;
+
+  const product = products[productId];
+
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl("productName", product.name);
+  setEl("productDescription", product.description);
+  setEl("productPrice", `$${product.price}`);
+  setEl("stockBadge", `Only ${product.stock} left in stock`);
+  setEl("reviewCount", `(${product.reviews} reviews)`);
+
+  const mainImg = document.getElementById("mainProductImage");
+  if (mainImg) { mainImg.src = product.images[0]; mainImg.alt = product.name; }
+
+  const thumbs = document.getElementById("productThumbs");
+  if (thumbs) {
+    thumbs.innerHTML = "";
+    product.images.forEach((imgSrc, index) => {
+      const thumb = document.createElement("img");
+      thumb.src = imgSrc;
+      thumb.alt = product.name;
+      thumb.className = "product-thumb" + (index === 0 ? " active-thumb" : "");
+      thumb.onerror = function() { this.remove(); };
+      thumb.addEventListener("click", () => {
+        if (mainImg) mainImg.src = imgSrc;
+        document.querySelectorAll(".product-thumb").forEach(t => t.classList.remove("active-thumb"));
+        thumb.classList.add("active-thumb");
+      });
+      thumbs.appendChild(thumb);
+    });
+  }
+
+  const addBtn = document.getElementById("addToCartBtn");
+  if (addBtn) addBtn.onclick = () => addToCart(product.id);
+
+  document.title = `${product.name} — Elite Time`;
+  renderUpsells(product.id);
+}
+
+/* =============================================
+   UPSELL GRID — FIX: includes img-wrap + overlay
+   ============================================= */
+function renderUpsells(currentProductId) {
+  const upsellGrid = document.getElementById("upsellGrid");
+  if (!upsellGrid) return;
+  upsellGrid.innerHTML = "";
+  Object.values(products)
+    .filter(p => p.id !== currentProductId)
+    .slice(0, 3)
+    .forEach(product => {
+      const card = document.createElement("a");
+      card.href = `product.html?id=${product.id}`;
+      card.className = "watch-card";
+      card.innerHTML = `
+        <div class="watch-card-img-wrap">
+          <img src="${product.images[0]}" alt="${product.name}" class="watch-card-img">
+          <div class="watch-card-overlay">
+            <span class="watch-card-cta">Shop Now</span>
+          </div>
+        </div>
+        <div class="watch-card-body">
+          <div class="watch-card-name">${product.name}</div>
+          <div class="watch-card-price">$${product.price}</div>
+        </div>
+      `;
+      upsellGrid.appendChild(card);
+    });
+}
+
+/* =============================================
+   CART PAGE
+   ============================================= */
+function renderCartPage() {
+  const container = document.getElementById("cartItems");
+  const checkoutWrap = document.getElementById("checkoutWrap");
+  if (!container) return;
+
+  const cart = getCart();
+  container.innerHTML = "";
+
+  if (cart.length === 0) {
+    container.innerHTML = `<p style="font-size:18px; color:var(--text-muted); font-weight:300; margin-top:10px;">Your cart is empty.</p>`;
+    if (checkoutWrap) checkoutWrap.style.display = "none";
+    return;
+  }
+
+  let total = 0;
+  cart.forEach((item) => {
+    const product = products[item.id];
+    if (!product) return;
+    const boxKitTotal = item.boxKit ? 35 * item.quantity : 0;
+const lineTotal = (product.price * item.quantity) + boxKitTotal;
+    total += lineTotal;
+
+    const el = document.createElement("div");
+    el.className = "cart-item";
+    el.innerHTML = `
+  <img src="${product.images[0]}" alt="${product.name}" class="cart-item-image">
+
+  <div class="cart-item-details">
+    <h3>${product.name}</h3>
+    <p>$${product.price} each</p>
+
+    <div class="qty-row">
+      <button class="qty-btn minus-btn" data-id="${product.id}">−</button>
+      <span class="qty-value">${item.quantity}</span>
+      <button class="qty-btn plus-btn" data-id="${product.id}">+</button>
     </div>
-    <div class="hero-media"><img src="${featured[0].images[0]}" alt="${featured[0].name}"><div class="hero-card"><div><small>Featured Piece</small><strong>${featured[0].name}</strong></div><a class="btn accent" href="#/product/${featured[0].id}">View</a></div></div>
-  </section>
-  <div class="marquee"><div class="marquee-track"><span>Fast Shipping</span><span>Secure Checkout</span><span>Premium Feel</span><span>Direct Support</span><span>Modern Luxury</span><span>Fast Shipping</span><span>Secure Checkout</span><span>Premium Feel</span><span>Direct Support</span><span>Modern Luxury</span></div></div>
-  <section class="section"><div class="split-head"><div><div class="eyebrow">Best Sellers</div><h2>Clean pieces. Big presence.</h2><p class="section-sub">Your customer should instantly understand the watch, the price, and the vibe. No clutter.</p></div><a class="btn ghost" href="#/shop">View All</a></div><div class="product-grid">${featured.map(card).join('')}</div></section>
-  <section class="section"><div class="feature-grid"><div class="feature-card dark"><h3>A real new direction.</h3><p>This is not the old dark-gold template. The rebuild uses cream, burgundy, dark teal, soft cards, editorial type, and big product-first layouts.</p><a class="btn accent" href="#/shop">Explore Watches</a></div><div class="feature-card"><h3>Simple buying.</h3><p>Product pages are focused around the image, details, stock, and add-to-cart with less noise.</p></div><div class="feature-card"><h3>Mobile ready.</h3><p>Cards, checkout, menu, and gallery collapse cleanly on phones.</p></div></div></section>
-  <section class="section"><div class="split-head"><div><div class="eyebrow">Premium Picks</div><h2>Statement watches.</h2></div></div><div class="product-grid">${premium.map(card).join('')}</div></section>`;
+
+    ${product.category !== "moissanite" ? `
+  <label class="box-kit-row">
+    <input type="checkbox" class="box-kit-toggle" data-id="${product.id}" ${item.boxKit ? "checked" : ""}>
+    <span>Add Watch Box Kit +$35</span>
+  </label>
+` : `
+  <div class="box-kit-included">
+    <span>Box & Papers Included</span>
+  </div>
+`}
+
+    <div class="line-total">Subtotal: $${lineTotal}</div>
+  </div>
+
+  <button class="remove-btn" data-id="${product.id}" aria-label="Remove">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+`;
+    container.appendChild(el);
+  });
+
+  const totalEl = document.createElement("div");
+  totalEl.className = "cart-total";
+  totalEl.textContent = `Total: $${total}`;
+  container.appendChild(totalEl);
+
+  if (checkoutWrap) checkoutWrap.style.display = "block";
+
+  container.querySelectorAll(".plus-btn").forEach(btn => btn.addEventListener("click", () => increaseQuantity(btn.dataset.id)));
+  container.querySelectorAll(".minus-btn").forEach(btn => btn.addEventListener("click", () => decreaseQuantity(btn.dataset.id)));
+  container.querySelectorAll(".remove-btn").forEach(btn => btn.addEventListener("click", () => removeFromCart(btn.dataset.id)));
+  container.querySelectorAll(".box-kit-toggle").forEach(toggle => toggle.addEventListener("change", () => toggleBoxKit(toggle.dataset.id)));
 }
 
-function renderShop(){
-  const cats=['all',...new Set(allProducts.map(p=>p.category).filter(Boolean))];
-  const list=currentFilter==='all'?allProducts:allProducts.filter(p=>p.category===currentFilter);
-  $('#app').innerHTML=`<section class="section"><div class="split-head"><div><div class="eyebrow">Shop All</div><h1 class="page-title">Every timepiece.</h1><p class="page-sub">Same exact product titles and image filenames — rebuilt into a cleaner single-page shopping experience.</p></div></div><div class="filter-bar">${cats.map(c=>`<button class="filter ${c===currentFilter?'active':''}" data-filter="${c}">${c.replaceAll('_',' ')}</button>`).join('')}</div><div class="product-grid">${list.map(card).join('')}</div></section>`;
-  $$('.filter').forEach(b=>b.onclick=()=>{currentFilter=b.dataset.filter;renderShop()});
+/* =============================================
+   CHECKOUT SUMMARY
+   ============================================= */
+function renderCheckoutSummary() {
+  const el = document.getElementById("checkoutSummary");
+  if (!el) return;
+
+  const cart = getCart();
+
+  if (cart.length === 0) {
+    el.innerHTML = `<p style="color:var(--text-muted)">Your cart is empty.</p>`;
+    return;
+  }
+
+  let total = 0;
+  let html = `<div class="checkout-summary-list">`;
+
+  cart.forEach(item => {
+    const p = products[item.id];
+    if (!p) return;
+
+    const boxKitTotal = item.boxKit ? 35 * item.quantity : 0;
+    const lineTotal = (p.price * item.quantity) + boxKitTotal;
+    total += lineTotal;
+
+    html += `
+      <div class="checkout-summary-item">
+        <span>
+          ${p.name} × ${item.quantity}
+          ${item.boxKit ? `<br><small class="checkout-addon">Watch Box Kit × ${item.quantity}</small>` : ""}
+        </span>
+        <span>$${lineTotal}</span>
+      </div>
+    `;
+  });
+
+  html += `</div><div class="checkout-grand-total">Total: $${total}</div>`;
+  el.innerHTML = html;
 }
 
-function renderProduct(id){
-  const p=products[id]||allProducts[0]; currentQty=1; currentImage=0;
-  $('#app').innerHTML=`<section class="product-page"><div><div class="gallery-main"><img id="mainImg" src="${p.images[0]}" alt="${p.name}"></div><div class="thumbs">${p.images.map((im,i)=>`<button class="thumb ${i===0?'active':''}" data-i="${i}"><img src="${im}" alt="${p.name} image ${i+1}"></button>`).join('')}</div></div><aside class="buy-panel"><div class="eyebrow">${p.category||'Elite Time'}</div><h1>${p.name}</h1><div class="rating">★★★★★ <span style="color:var(--muted)">(${p.reviews||0} reviews)</span></div><p class="lead">${p.description}</p><div class="stock">${p.stock<=2?'Only ':''}${p.stock} left in stock</div><div class="price" style="font-size:42px;margin-top:16px">${money(p.price)}</div><div class="qty-row"><button id="minus">−</button><span id="qty">1</span><button id="plus">+</button></div><div class="actions"><button class="btn primary" id="addBtn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button><a class="btn ghost" href="#/cart">View Cart</a></div><div class="info-list"><div class="info-item"><strong>Premium finish</strong><br><span style="color:var(--muted)">Clean case, bracelet, and dial presence.</span></div><div class="info-item"><strong>Direct checkout</strong><br><span style="color:var(--muted)">Cash App / Zelle order flow.</span></div></div></aside></section><section class="section"><div class="eyebrow">You may also like</div><h2>More from the collection.</h2><div class="product-grid">${allProducts.filter(x=>x.id!==p.id).slice(0,4).map(card).join('')}</div></section>`;
-  $$('.thumb').forEach(btn=>btn.onclick=()=>{$$('.thumb').forEach(x=>x.classList.remove('active'));btn.classList.add('active');$('#mainImg').src=p.images[+btn.dataset.i]});
-  $('#minus').onclick=()=>{currentQty=Math.max(1,currentQty-1);$('#qty').textContent=currentQty};
-  $('#plus').onclick=()=>{currentQty=Math.min(p.stock,currentQty+1);$('#qty').textContent=currentQty};
-  $('#addBtn').onclick=()=>addToCart(p.id,currentQty);
+/* =============================================
+   PAYMENT OPTIONS
+   ============================================= */
+function initPaymentOptions() {
+  const options = document.querySelectorAll(".payment-option");
+  if (!options.length) return;
+  options.forEach(option => {
+    option.addEventListener("click", () => {
+      options.forEach(o => o.classList.remove("selected"));
+      option.classList.add("selected");
+    });
+  });
 }
 
-function renderCart(){
-  const cart=getCart(); const rows=cart.map(i=>({...i,p:products[i.id]})).filter(i=>i.p); const subtotal=rows.reduce((a,i)=>a+i.p.price*i.qty,0);
-  $('#app').innerHTML=`<section class="cart-page"><div class="eyebrow">Your Bag</div><h1 class="page-title">Cart</h1>${rows.length?`<div class="cart-list">${rows.map(i=>`<div class="cart-item"><img src="${i.p.images[0]}" alt="${i.p.name}"><div><h3>${i.p.name}</h3><div style="color:var(--muted)">${money(i.p.price)} × ${i.qty}</div></div><div><strong class="price">${money(i.p.price*i.qty)}</strong><br><button class="remove-btn" data-id="${i.id}">Remove</button></div></div>`).join('')}</div><div class="cart-summary"><div class="summary-row"><span>Subtotal</span><strong>${money(subtotal)}</strong></div><div class="summary-row"><span>Shipping</span><strong>Free</strong></div><div class="summary-row total"><span>Total</span><strong>${money(subtotal)}</strong></div><div class="actions"><a class="btn primary" href="#/checkout">Proceed to Checkout</a><a class="btn ghost" href="#/shop">Keep Shopping</a></div></div>`:`<div class="empty"><h2>Your cart is empty.</h2><p class="page-sub" style="margin:auto">Add a watch to start checkout.</p><a class="btn primary" href="#/shop">Shop Watches</a></div>`}</section>`;
-  $$('.remove-btn').forEach(b=>b.onclick=()=>{saveCart(getCart().filter(i=>i.id!==b.dataset.id));renderCart()});
+/* =============================================
+   PLACE ORDER
+   ============================================= */
+function placeOrder() {
+  const get = id => document.getElementById(id)?.value.trim();
+  const fullName = get("fullName"), email = get("email"), phone = get("phone");
+  const address = get("address"), city = get("city"), state = get("state"), zip = get("zip");
+  const selectedPayment = document.querySelector(".payment-option.selected");
+  const paymentMethod = selectedPayment ? selectedPayment.innerText.trim() : "Not selected";
+
+  if (!fullName || !email || !phone || !address || !city || !state || !zip) {
+    alert("Please fill out all checkout fields.");
+    return;
+  }
+
+  const cart = getCart();
+  if (!cart.length) { alert("Your cart is empty."); return; }
+
+  let orderSummary = "", total = 0;
+  let receiptHtml = `<div class="confirmation-receipt-list">`;
+
+  cart.forEach(item => {
+    const p = products[item.id];
+    if (!p) return;
+    const boxKitTotal = item.boxKit ? 35 * item.quantity : 0;
+const lineTotal = (p.price * item.quantity) + boxKitTotal;
+    total += lineTotal;
+    orderSummary += `${p.name} x${item.quantity}${item.boxKit ? " + Watch Box Kit" : ""} - $${lineTotal}\n`;
+    receiptHtml += `
+  <div class="confirmation-receipt-item">
+    <span>
+      ${p.name} × ${item.quantity}
+      ${item.boxKit ? `<br><small class="checkout-addon">Watch Box Kit × ${item.quantity}</small>` : ""}
+    </span>
+    <span>$${lineTotal}</span>
+  </div>
+`;
+  });
+
+  receiptHtml += `</div><div class="confirmation-receipt-total">Total: $${total}</div>`;
+
+  const templateParams = {
+    full_name: fullName, customer_email: email, customer_phone: phone,
+    address, city, state, zip, payment_method: paymentMethod,
+    order_summary: orderSummary, order_total: `$${total}`
+  };
+
+  emailjs.send("service_3whl1kl", "template_j170iq5", templateParams)
+    .then(() => {
+      const checkoutPage = document.getElementById("checkoutPage");
+      const confirmationPage = document.getElementById("confirmationPage");
+      const confirmationReceipt = document.getElementById("confirmationReceipt");
+      const confirmationIcon = document.getElementById("confirmationIcon");
+      const steps = {
+        cart: document.getElementById("stepCart"),
+        info: document.getElementById("stepInfo"),
+        payment: document.getElementById("stepPayment"),
+        done: document.getElementById("stepDone")
+      };
+      const checkoutSteps = document.getElementById("checkoutSteps");
+
+      if (confirmationReceipt) confirmationReceipt.innerHTML = receiptHtml;
+      if (confirmationIcon) confirmationIcon.classList.remove("animate-check");
+
+      [steps.cart, steps.info, steps.payment, steps.done].forEach(s => s && s.classList.remove("glow-step", "pop-in"));
+      if (checkoutSteps) checkoutSteps.className = "checkout-steps";
+
+      setTimeout(() => { steps.cart && steps.cart.classList.add("active", "completed", "glow-step"); }, 100);
+      setTimeout(() => { steps.info && steps.info.classList.add("active", "completed", "glow-step"); }, 250);
+      setTimeout(() => { steps.payment && steps.payment.classList.add("active", "completed", "glow-step"); }, 400);
+      setTimeout(() => {
+        steps.done && steps.done.classList.add("active", "completed", "pop-in", "glow-step");
+        confirmationIcon && confirmationIcon.classList.add("animate-check");
+      }, 650);
+
+      setTimeout(() => {
+        if (checkoutPage) checkoutPage.style.display = "none";
+        if (confirmationPage) confirmationPage.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }, 850);
+
+      localStorage.removeItem("eliteTimeCart");
+      updateCartCount();
+    })
+.catch(err => {
+  console.error("EmailJS full error:", err);
+  alert("Failed to send order: " + (err?.text || err?.message || JSON.stringify(err)));
+});
 }
 
-function renderCheckout(){
-  const cart=getCart().map(i=>({...i,p:products[i.id]})).filter(i=>i.p); const total=cart.reduce((a,i)=>a+i.p.price*i.qty,0);
-  $('#app').innerHTML=`<section class="checkout-page"><div class="eyebrow">Secure Checkout</div><h1 class="page-title">Finish your order.</h1><div class="checkout-grid"><div class="checkout-card"><h2>Shipping Info</h2><div class="form-grid"><label>Full Name<input id="name" placeholder="John Doe"></label><label>Email<input id="email" placeholder="you@example.com"></label><label>Phone<input id="phone" placeholder="(555) 555-5555"></label><label>Street Address<input id="address" placeholder="123 Main Street"></label><div class="form-row"><label>City<input id="city" placeholder="Austin"></label><label>State<input id="state" placeholder="TX"></label></div><label>ZIP Code<input id="zip" placeholder="78701"></label></div></div><div class="checkout-card"><h2>Order Summary</h2>${cart.length?cart.map(i=>`<div class="summary-row"><span>${i.p.name} × ${i.qty}</span><strong>${money(i.p.price*i.qty)}</strong></div>`).join(''):'<p>Your cart is empty.</p>'}<div class="summary-row total"><span>Total</span><strong>${money(total)}</strong></div><h3>Payment</h3><div class="payment-option">Cash App</div><div class="payment-option">Zelle</div><button class="btn primary" id="placeOrder" style="width:100%;justify-content:center;margin-top:12px">Complete Order</button></div></div></section>`;
-  $('#placeOrder').onclick=()=>{if(!cart.length)return toast('Your cart is empty'); toast('Order info saved — contact Elite Time to confirm payment'); localStorage.removeItem('eliteTimeCart'); updateCartCount(); setTimeout(()=>setRoute('/'),900)};
+/* =============================================
+   ALL PRODUCTS PAGE
+   FIX: buildProductCard now has watch-card-img-wrap
+   + overlay so hover effect works on products.html
+   ============================================= */
+function buildProductCard(product) {
+  const badgeMap = {
+    "Best Seller": "badge-best",
+    "Hot":         "badge-hot",
+    "Only 2 Left": "badge-low",
+    "Only 3 Left": "badge-low",
+    "Popular":     "badge-popular"
+  };
+  const badgeClass = badgeMap[product.badge] || "badge-popular";
+  const isHot = product.badge === "Hot";
+
+  return `
+    <a href="product.html?id=${product.id}" class="watch-card${isHot ? " hot-pick" : ""}">
+      <div class="watch-card-img-wrap">
+        <img src="${product.images[0]}" alt="${product.name}" class="watch-card-img">
+        <div class="watch-card-overlay">
+          <span class="watch-card-cta">Shop Now</span>
+        </div>
+      </div>
+      <div class="watch-card-body">
+        ${product.badge ? `<div class="watch-card-badge ${badgeClass}">${isHot ? "🔥 Hot Pick" : product.badge}</div>` : ""}
+        <div class="watch-card-name">${product.name}</div>
+        <div class="watch-card-price">$${product.price}</div>
+        <div class="watch-card-meta">
+          <div class="watch-card-stars">★★★★★ (${product.reviews})</div>
+          <div class="watch-card-sold">+${product.sold} sold</div>
+        </div>
+      </div>
+    </a>
+  `;
 }
 
-function renderInfo(title,icon,sub,items){
-  $('#app').innerHTML=`<section class="info-page"><div class="info-box"><div class="kicker"><i class="fa-solid ${icon}"></i> Elite Time</div><h1>${title}</h1><p class="lead">${sub}</p><div class="info-list">${items.map(i=>`<div class="info-item"><strong>${i[0]} ${i[1]}</strong><br><span style="color:var(--muted)">${i[2]}</span></div>`).join('')}</div><div class="actions"><a class="btn primary" href="#/shop">Shop Watches</a><a class="btn ghost" href="#/support">Contact Support</a></div></div></section>`;
+function renderAllProducts(filter = "all") {
+  const grid = document.getElementById("allProductsGrid");
+  if (!grid) return;
+  const items = Object.values(products);
+  const filtered = filter === "all" ? items : items.filter(p => p.category === filter);
+  grid.innerHTML = filtered.map(buildProductCard).join("");
+  refreshCursorTargets();
 }
 
-function renderSupport(){
-  $('#app').innerHTML=`<section class="info-page"><div class="info-box"><div class="kicker"><i class="fa-solid fa-headset"></i> Direct Support</div><h1>Talk to a real person.</h1><p class="lead">Need sizing help, order questions, or want to check availability? Reach out directly.</p><div class="info-list"><div class="info-item"><strong>📧 Email Support</strong><br><span style="color:var(--muted)">Send a message and get a direct response.</span></div><div class="info-item"><strong>📲 Instagram</strong><br><span style="color:var(--muted)">Fast direct messages for product questions.</span></div><div class="info-item"><strong>📦 Order Help</strong><br><span style="color:var(--muted)">Questions about shipping, tracking, and checkout.</span></div></div><div class="actions"><a class="btn primary" href="mailto:Natemathew07@gmail.com?subject=Support Request - Elite Time&body=Hey Elite Time,%0D%0A%0D%0AName:%0D%0AQuestion:%0D%0A%0D%0AThanks."><i class="fa-solid fa-envelope"></i>Email Support</a><a class="btn ghost" href="https://instagram.com/Skidz7722" target="_blank"><i class="fa-brands fa-instagram"></i>Instagram</a></div></div></section>`;
+function initProductFilters() {
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const grid = document.getElementById("allProductsGrid");
+  if (!filterButtons.length || !grid) return;
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      grid.classList.add("fade-out");
+      setTimeout(() => {
+        renderAllProducts(btn.dataset.filter);
+        grid.classList.remove("fade-out");
+        grid.classList.add("fade-in");
+        setTimeout(() => grid.classList.remove("fade-in"), 300);
+      }, 180);
+    });
+  });
 }
 
-function openDrawer(){ $('#drawer').classList.add('open'); $('#drawerBackdrop').classList.add('open'); document.body.classList.add('lock')}
-function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawerBackdrop').classList.remove('open'); document.body.classList.remove('lock')}
+/* =============================================
+   NAVBAR SCROLL SHRINK
+   ============================================= */
+function initNavbarShrink() {
+  const navbar = document.getElementById("navbar") || document.querySelector(".navbar");
+  if (!navbar) return;
+  window.addEventListener("scroll", () => {
+    navbar.classList.toggle("scrolled", window.scrollY > 60);
+  });
+}
 
-window.addEventListener('hashchange',()=>{route();navActive()});
-$('#themeBtn').onclick=()=>{document.body.classList.toggle('dark');localStorage.setItem('eliteTheme',document.body.classList.contains('dark')?'dark':'light')};
-$('#menuBtn').onclick=openDrawer; $('#closeDrawer').onclick=closeDrawer; $('#drawerBackdrop').onclick=closeDrawer; $$('#drawer a').forEach(a=>a.onclick=closeDrawer);
-if(localStorage.getItem('eliteTheme')==='dark')document.body.classList.add('dark');
-updateCartCount(); route();
+/* =============================================
+   MOBILE HAMBURGER MENU
+   ============================================= */
+function initMobileMenu() {
+  const toggle  = document.getElementById("mobileMenuToggle");
+  const drawer  = document.getElementById("mobileMenuDrawer");
+  const overlay = document.getElementById("mobileMenuOverlay");
+  const closeBtn = document.getElementById("mobileMenuClose");
+  if (!toggle || !drawer) return;
+
+  function openMenu() {
+    drawer.classList.add("open");
+    if (overlay) overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  function closeMenu() {
+    drawer.classList.remove("open");
+    if (overlay) overlay.classList.remove("open");
+    document.body.style.overflow = "";
+    toggle.setAttribute("aria-expanded", "false");
+  }
+
+  toggle.addEventListener("click", () => {
+    drawer.classList.contains("open") ? closeMenu() : openMenu();
+  });
+
+  if (closeBtn) closeBtn.addEventListener("click", closeMenu);
+  if (overlay)  overlay.addEventListener("click", closeMenu);
+
+  drawer.querySelectorAll(".mobile-nav-link").forEach(link => {
+    link.addEventListener("click", closeMenu);
+  });
+}
+
+/* =============================================
+   CURSOR
+   ============================================= */
+function initCursor() {
+  const dot  = document.getElementById("cursorDot");
+  const ring = document.getElementById("cursorRing");
+  if (!dot || !ring) return;
+
+  let mouseX = 0, mouseY = 0;
+  let ringX  = 0, ringY  = 0;
+
+  document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + "px";
+    dot.style.top  = mouseY + "px";
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + "px";
+    ring.style.top  = ringY + "px";
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.addEventListener("mouseleave", () => {
+    dot.style.opacity  = "0";
+    ring.style.opacity = "0";
+  });
+  document.addEventListener("mouseenter", () => {
+    dot.style.opacity  = "1";
+    ring.style.opacity = "1";
+  });
+}
+
+/* =============================================
+   CURSOR HOVER TARGETS
+   ============================================= */
+function refreshCursorTargets() {
+  const ring = document.getElementById("cursorRing");
+  if (!ring) return;
+  const selector = "a, button, .watch-card, .trust-card, .filter-btn, .payment-option, .product-thumb, .nav-icon-btn, .step-item, .info-list-item, .mini-review";
+  document.querySelectorAll(selector).forEach(el => {
+    if (!el.dataset.cursorBound) {
+      el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+      el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+      el.dataset.cursorBound = "1";
+    }
+  });
+}
+
+/* =============================================
+   SCROLL REVEAL
+   ============================================= */
+function initScrollReveal() {
+  const els = document.querySelectorAll(".reveal");
+  if (!els.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+
+  els.forEach(el => observer.observe(el));
+}
+
+/* =============================================
+   SINGLE DOMContentLoaded — all inits in one place
+   FIX: was firing twice (two separate listeners merged here)
+   ============================================= */
+document.addEventListener("DOMContentLoaded", () => {
+  // Core
+  initTheme();
+  updateCartCount();
+  initNavbarShrink();
+  initMobileMenu();
+
+  // Page-specific (each checks for its own DOM nodes — safe to call on every page)
+  renderProductPage();
+  renderCartPage();
+  renderCheckoutSummary();
+  initPaymentOptions();
+  renderAllProducts("all");
+  initProductFilters();
+
+  // Visual enhancements
+  initCursor();
+  initScrollReveal();
+
+  // Hero elements above fold — reveal immediately without waiting for scroll
+  document.querySelectorAll(".hero .reveal").forEach((el, i) => {
+    setTimeout(() => el.classList.add("visible"), 100 + i * 120);
+  });
+
+  // Refresh cursor targets after dynamic content has rendered
+  setTimeout(() => {
+    refreshCursorTargets();
+    initScrollReveal();
+  }, 500);
+});
