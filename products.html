@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Watches — Elite Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse the full Elite Time watch collection. Premium timepieces for every style.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="orb-field">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+<div class="mobile-menu-drawer" id="mobileMenuDrawer">
+  <div class="mobile-menu-header">
+    <span class="logo-name">Elite Time</span>
+    <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <nav class="mobile-menu-nav">
+    <a href="index.html" class="mobile-nav-link">Home</a>
+    <a href="index.html#shop" class="mobile-nav-link">Best Sellers</a>
+    <a href="products.html" class="mobile-nav-link active">All Watches</a>
+    <a href="support.html" class="mobile-nav-link">Support</a>
+    <a href="cart.html" class="mobile-nav-link">Cart</a>
+  </nav>
+</div>
+
+<header class="navbar" id="navbar">
+  <a href="index.html" class="logo">
+    <img src="logo.jpeg" alt="Elite Time">
+    <div class="logo-text">
+      <span class="logo-name">Elite Time</span>
+      <span class="logo-tagline">Luxury Timepieces</span>
+    </div>
+  </a>
+  <nav class="nav-center">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="index.html#shop" class="nav-link">Best Sellers</a>
+    <a href="support.html" class="nav-link">Support</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="nav-icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i class="fa-solid fa-sun sun"></i>
+      <i class="fa-solid fa-moon moon"></i>
+    </button>
+    <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Cart">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span class="cart-count"></span>
+    </a>
+    <button class="nav-icon-btn mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu" aria-expanded="false">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+</header>
+
+<section class="products-hero">
+  <div class="section-eyebrow">The Collection</div>
+  <h1 class="section-title">All <em>Timepieces</em></h1>
+  <p class="section-sub" style="margin-top:14px;">Every watch curated for its design, feel, and everyday elegance. Find your signature piece.</p>
+</section>
+
+<section class="products-page-section">
+  <div class="products-filter-row">
+    <button class="filter-btn active" data-filter="all">All Styles</button>
+    <button class="filter-btn" data-filter="diver">Divers</button>
+    <button class="filter-btn" data-filter="traveler">Travelers</button>
+    <button class="filter-btn" data-filter="classic">Classics</button>
+    <button class="filter-btn" data-filter="royal_oak">Royal Oak</button>
+    <button class="filter-btn" data-filter="cartier">Cartier</button>
+    <button class="filter-btn" data-filter="patek">Patek</button>
+    <button class="filter-btn" data-filter="moissanite">Moissanite</button>
+  </div>
+
+  <div class="all-products-grid" id="allProductsGrid"></div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

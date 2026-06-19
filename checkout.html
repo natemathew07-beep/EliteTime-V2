@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout — Elite Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="orb-field">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<header class="navbar" id="navbar">
+  <a href="index.html" class="logo">
+    <img src="logo.jpeg" alt="Elite Time">
+    <div class="logo-text">
+      <span class="logo-name">Elite Time</span>
+      <span class="logo-tagline">Luxury Timepieces</span>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <button class="nav-icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i class="fa-solid fa-sun sun"></i>
+      <i class="fa-solid fa-moon moon"></i>
+    </button>
+    <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Cart">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span class="cart-count"></span>
+    </a>
+  </div>
+</header>
+
+<div id="checkoutPage">
+  <div class="checkout-page-wrap">
+    <div class="page-header">
+      <div class="checkout-steps" id="checkoutSteps">
+        <div class="checkout-step completed" id="stepCart">Cart</div>
+        <div class="checkout-step active" id="stepInfo">Info</div>
+        <div class="checkout-step active" id="stepPayment">Payment</div>
+        <div class="checkout-step" id="stepDone">Done</div>
+      </div>
+      <h1 class="page-title" id="checkoutHeaderTitle">Secure Checkout</h1>
+      <p class="page-sub" id="checkoutHeaderSubtitle">Complete your order below</p>
+    </div>
+
+    <div class="checkout-grid">
+      <div class="checkout-card">
+        <h3>Shipping Information</h3>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="fullName" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="(555) 555-5555">
+        </div>
+        <div class="form-group">
+          <label>Street Address</label>
+          <input type="text" id="address" placeholder="123 Main Street">
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="city" placeholder="Fort Worth">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="state" placeholder="TX">
+          </div>
+          <div class="form-group">
+            <label>ZIP Code</label>
+            <input type="text" id="zip" placeholder="76103">
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout-card">
+        <h3>Payment Method</h3>
+        <div class="payment-options">
+          <div class="payment-option selected">Cash App</div>
+          <div class="payment-option">Zelle</div>
+        </div>
+
+        <div style="margin-bottom:16px; padding:14px 16px; background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius-sm);">
+          <p style="font-size:13px; color:var(--text-muted); font-weight:300; line-height:1.7;">After placing your order, you'll receive payment instructions via email or text. We'll confirm your order and send your invoice within 24 hours.</p>
+        </div>
+
+        <div id="checkoutSummary"></div>
+
+        <button class="btn-primary full-btn" onclick="placeOrder()" style="justify-content:center; font-size:15px; padding:18px;">
+          <i class="fa-solid fa-lock"></i> Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Overlay -->
+<div id="confirmationPage" class="confirmation-page" style="display:none;">
+  <div class="confirmation-card">
+    <div class="confirmation-icon" id="confirmationIcon">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <h2>Order Received</h2>
+    <p>Thank you for shopping with Elite Time.</p>
+    <p style="margin-top:6px;">We'll review your order and reach out shortly with payment details.</p>
+    <div class="confirmation-receipt" id="confirmationReceipt"></div>
+    <div class="confirmation-actions">
+      <a href="index.html" class="btn-primary" onclick="document.body.style.overflow='auto'">
+        Back Home
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function() { emailjs.init("aHDDu7LVJLkZQgGCh"); })();
+</script>
+<script src="script.js"></script>
+</body>
+</html>

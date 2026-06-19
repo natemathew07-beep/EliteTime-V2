@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product — Elite Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="orb-field">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<header class="navbar" id="navbar">
+  <a href="index.html" class="logo">
+    <img src="logo.jpeg" alt="Elite Time">
+    <div class="logo-text">
+      <span class="logo-name">Elite Time</span>
+      <span class="logo-tagline">Luxury Timepieces</span>
+    </div>
+  </a>
+  <nav class="nav-center">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="products.html" class="nav-link">All Watches</a>
+    <a href="support.html" class="nav-link">Support</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="nav-icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i class="fa-solid fa-sun sun"></i>
+      <i class="fa-solid fa-moon moon"></i>
+    </button>
+    <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Cart">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span class="cart-count"></span>
+    </a>
+  </div>
+</header>
+
+<div class="product-layout">
+  <div class="product-gallery-wrap">
+    <img id="mainProductImage" src="" alt="Product" class="product-main-img">
+    <div class="product-thumbs-row" id="productThumbs"></div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-eyebrow">Elite Time Collection</div>
+    <h1 class="product-name" id="productName"></h1>
+
+    <div class="product-rating">
+      <span class="stars">★★★★★</span>
+      <span class="review-count" id="reviewCount">(124 reviews)</span>
+    </div>
+
+    <p class="product-desc" id="productDescription"></p>
+
+    <div class="product-stock" id="stockBadge">Only 3 left in stock</div>
+
+    <div class="product-price" id="productPrice"></div>
+
+    <div class="product-actions">
+      <button class="add-to-cart-btn" id="addToCartBtn">
+        <i class="fa-solid fa-bag-shopping" style="margin-right:10px;"></i> Add to Cart
+      </button>
+      <a href="cart.html" class="btn-ghost" style="text-align:center;">View Cart</a>
+    </div>
+
+    <div class="mini-reviews">
+      <div class="mini-review">"Crazy quality for the price. Looks way more expensive than it is."</div>
+      <div class="mini-review">"Clean look and gets compliments every single day."</div>
+      <div class="mini-review">"Heavy feel, smooth finish. Absolutely worth it."</div>
+    </div>
+  </div>
+</div>
+
+<div class="upsell-wrap">
+  <div class="section-eyebrow">You May Also Like</div>
+  <h2 class="section-title" style="font-size:42px; margin-bottom:32px;">More <em>Fine Pieces</em></h2>
+  <div class="products-grid" id="upsellGrid"></div>
+</div>
+
+<div class="upsell-popup" id="upsellPopup">
+  <div class="upsell-popup-card">
+    <button class="upsell-close" id="upsellClose" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <h3>Added to Cart ✓</h3>
+    <p>You may also enjoy:</p>
+    <div class="upsell-popup-grid" id="upsellPopupGrid"></div>
+    <div class="upsell-popup-actions">
+      <a href="cart.html" class="btn-primary">
+        <i class="fa-solid fa-bag-shopping"></i> View Cart
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

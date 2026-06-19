@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart — Elite Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="orb-field">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<header class="navbar" id="navbar">
+  <a href="index.html" class="logo">
+    <img src="logo.jpeg" alt="Elite Time">
+    <div class="logo-text">
+      <span class="logo-name">Elite Time</span>
+      <span class="logo-tagline">Luxury Timepieces</span>
+    </div>
+  </a>
+  <nav class="nav-center">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="products.html" class="nav-link">All Watches</a>
+    <a href="support.html" class="nav-link">Support</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="nav-icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i class="fa-solid fa-sun sun"></i>
+      <i class="fa-solid fa-moon moon"></i>
+    </button>
+    <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Cart">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span class="cart-count"></span>
+    </a>
+  </div>
+</header>
+
+<div class="cart-wrap">
+  <div class="page-header">
+    <div class="checkout-steps" style="margin-bottom:32px;">
+      <div class="checkout-step active">Cart</div>
+      <div class="checkout-step">Info</div>
+      <div class="checkout-step">Complete</div>
+    </div>
+    <h1 class="page-title">Your Cart</h1>
+    <p class="page-sub">Review your selected pieces before checkout</p>
+  </div>
+
+  <div id="cartItems"></div>
+
+  <div id="checkoutWrap" class="checkout-wrap" style="display:none;">
+    <a href="checkout.html" class="btn-primary" style="display:inline-flex; gap:10px; padding:18px 36px; font-size:15px;">
+      <i class="fa-solid fa-lock"></i> Proceed to Checkout
+    </a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

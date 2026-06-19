@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Elite Time — Luxury Timepieces</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Elite Time — Precision-crafted luxury timepieces. Shop our curated collection of premium watches.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Botanical blur background (greenery orbs) -->
+<div class="orb-field">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+<!-- Mobile Menu Drawer -->
+<div class="mobile-menu-drawer" id="mobileMenuDrawer">
+  <div class="mobile-menu-header">
+    <span class="logo-name">Elite Time</span>
+    <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <nav class="mobile-menu-nav">
+    <a href="index.html" class="mobile-nav-link active">Home</a>
+    <a href="index.html#shop" class="mobile-nav-link">Best Sellers</a>
+    <a href="products.html" class="mobile-nav-link">All Watches</a>
+    <a href="premium.html" class="mobile-nav-link">Premium</a>
+    <a href="support.html" class="mobile-nav-link">Support</a>
+    <a href="cart.html" class="mobile-nav-link">Cart</a>
+  </nav>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar" id="navbar">
+  <a href="index.html" class="logo">
+    <img src="logo.jpeg" alt="Elite Time">
+    <div class="logo-text">
+      <span class="logo-name">Elite Time</span>
+      <span class="logo-tagline">Luxury Timepieces</span>
+    </div>
+  </a>
+
+  <nav class="nav-center">
+    <a href="#shop" class="nav-link">Collection</a>
+    <a href="products.html" class="nav-link">All Watches</a>
+    <a href="premium.html" class="nav-link">Premium</a>
+    <a href="support.html" class="nav-link">Support</a>
+  </nav>
+
+  <div class="nav-actions">
+    <button class="nav-icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i class="fa-solid fa-sun sun"></i>
+      <i class="fa-solid fa-moon moon"></i>
+    </button>
+    <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Cart">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span class="cart-count"></span>
+    </a>
+    <button class="nav-icon-btn mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu" aria-expanded="false">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow reveal">The Elite Time Collection</div>
+    <h1 class="hero-heading reveal reveal-delay-1">
+      Time is the only
+      <em>true luxury.</em>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">Precision-crafted timepieces that define your presence. Luxury-inspired design, curated for those who move with purpose.</p>
+    <div class="hero-ctas reveal reveal-delay-3">
+      <a href="#shop" class="btn-primary">
+        <i class="fa-solid fa-arrow-down"></i>
+        Shop Best Sellers
+      </a>
+      <a href="products.html" class="btn-ghost">View All Watches</a>
+    </div>
+    <div class="hero-stats reveal reveal-delay-4">
+      <div class="hero-stat">
+        <span class="hero-stat-num">6</span>
+        <span class="hero-stat-label">Curated Pieces</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">600+</span>
+        <span class="hero-stat-label">Happy Customers</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">5★</span>
+        <span class="hero-stat-label">Average Rating</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-img-frame">
+      <img src="watch1.jpeg" alt="Elite Time Featured Watch">
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-label">Featured</div>
+      <div class="hero-badge-value">Black Diamond Classic</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot"></span>Free Shipping On All Orders</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Luxury-Inspired Design</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Secure Checkout</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Direct Customer Support</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Premium Feel &amp; Finish</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Fast Delivery</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Free Shipping On All Orders</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Luxury-Inspired Design</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Secure Checkout</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Direct Customer Support</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Premium Feel &amp; Finish</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Fast Delivery</span>
+  </div>
+</div>
+
+<!-- ===== BRAND STATEMENT ===== -->
+<section class="brand-section">
+  <p class="brand-quote reveal">"Designed for those who appreciate the feeling of luxury — every day."</p>
+  <div class="bark-rule reveal reveal-delay-1">
+    <div class="bark-rule-diamond"></div>
+  </div>
+  <p class="brand-sub reveal reveal-delay-2">Each piece in the Elite Time collection is hand-selected for its design precision, premium materials, and enduring style. This is wristwear that speaks before you do.</p>
+</section>
+
+<!-- ===== BEST SELLERS ===== -->
+<section id="shop" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow reveal">Best Sellers</div>
+    <h2 class="section-title reveal reveal-delay-1">Our Most <em>Coveted</em> Pieces</h2>
+    <p class="section-sub reveal reveal-delay-2">The watches our customers reach for first. Timeless designs crafted to elevate every wrist.</p>
+  </div>
+
+  <div class="products-grid">
+
+    <a href="product.html?id=watch2" class="watch-card reveal reveal-delay-1">
+      <div class="watch-card-img-wrap">
+        <img src="watch2.jpeg" alt="Black Diamond Classic" class="watch-card-img">
+        <div class="watch-card-overlay">
+          <span class="watch-card-cta">Shop Now</span>
+        </div>
+      </div>
+      <div class="watch-card-body">
+        <div class="watch-card-badge badge-best">Best Seller</div>
+        <div class="watch-card-name">Black Diamond Classic</div>
+        <div class="watch-card-price">$90</div>
+        <div class="watch-card-meta">
+          <div class="watch-card-stars">★★★★★</div>
+          <div class="watch-card-sold">+43 sold this week</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="product.html?id=watch3" class="watch-card reveal reveal-delay-2">
+      <div class="watch-card-img-wrap">
+        <img src="watch3.jpeg" alt="Gold Green Traveler" class="watch-card-img">
+        <div class="watch-card-overlay">
+          <span class="watch-card-cta">Shop Now</span>
+        </div>
+      </div>
+      <div class="watch-card-body">
+        <div class="watch-card-badge badge-low">Only 2 Left</div>
+        <div class="watch-card-name">Gold Green Traveler</div>
+        <div class="watch-card-price">$90</div>
+        <div class="watch-card-meta">
+          <div class="watch-card-stars">★★★★★</div>
+          <div class="watch-card-sold">+31 sold this week</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="product.html?id=watch4" class="watch-card hot-pick reveal reveal-delay-3">
+      <div class="watch-card-img-wrap">
+        <img src="watch4.jpeg" alt="Classic Black Diver" class="watch-card-img">
+        <div class="watch-card-overlay">
+          <span class="watch-card-cta">Shop Now</span>
+        </div>
+      </div>
+      <div class="watch-card-body">
+        <div class="watch-card-badge badge-hot">🔥 Hot Pick</div>
+        <div class="watch-card-name">Classic Black Diver</div>
+        <div class="watch-card-price">$90</div>
+        <div class="watch-card-meta">
+          <div class="watch-card-stars">★★★★★</div>
+          <div class="watch-card-sold">+52 sold this week</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="product.html?id=watch6" class="watch-card reveal reveal-delay-2">
+      <div class="watch-card-img-wrap">
+        <img src="watch6.jpeg" alt="Red Blue Traveler" class="watch-card-img">
+        <div class="watch-card-overlay">
+          <span class="watch-card-cta">Shop Now</span>
+        </div>
+      </div>
+      <div class="watch-card-body">
+        <div class="watch-card-badge badge-low">Only 3 Left</div>
+        <div class="watch-card-name">Red Blue Traveler</div>
+        <div class="watch-card-price">$90</div>
+        <div class="watch-card-meta">
+          <div class="watch-card-stars">★★★★★</div>
+          <div class="watch-card-sold">+39 sold this week</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="product.html?id=watch7" class="watch-card reveal reveal-delay-3">
+      <div class="watch-card-img-wrap">
+        <img src="watch7.jpeg" alt="Blue Roman Classic" class="watch-card-img">
+        <div class="watch-card-overlay">
+          <span class="watch-card-cta">Shop Now</span>
+        </div>
+      </div>
+      <div class="watch-card-body">
+        <div class="watch-card-badge badge-low">Only 2 Left</div>
+        <div class="watch-card-name">Blue Roman Classic</div>
+        <div class="watch-card-price">$90</div>
+        <div class="watch-card-meta">
+          <div class="watch-card-stars">★★★★★</div>
+          <div class="watch-card-sold">+19 sold this week</div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== TRUST ===== -->
+<section class="trust-section">
+  <div class="section-header" style="text-align:center;">
+    <div class="section-eyebrow reveal" style="justify-content:center;">Why Elite Time</div>
+    <h2 class="section-title reveal reveal-delay-1">Built on <em>Trust</em></h2>
+  </div>
+  <div class="trust-grid">
+    <a href="premium.html" class="trust-card reveal reveal-delay-1">
+      <div class="trust-icon"><i class="fa-solid fa-gem"></i></div>
+      <div class="trust-title">Premium Feel</div>
+      <p class="trust-desc">Every watch is selected for its weight, finish, and craftsmanship — luxury you can feel the moment you put it on.</p>
+    </a>
+    <a href="shipping.html" class="trust-card reveal reveal-delay-2">
+      <div class="trust-icon"><i class="fa-solid fa-truck-fast"></i></div>
+      <div class="trust-title">Fast Shipping</div>
+      <p class="trust-desc">Orders confirmed and dispatched promptly. We respond to every inquiry within 24 hours.</p>
+    </a>
+    <a href="secure.html" class="trust-card reveal reveal-delay-3">
+      <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="trust-title">Secure Orders</div>
+      <p class="trust-desc">Your order and personal information are always handled with complete discretion and care.</p>
+    </a>
+    <a href="support.html" class="trust-card reveal reveal-delay-4">
+      <div class="trust-icon"><i class="fa-solid fa-headset"></i></div>
+      <div class="trust-title">Direct Support</div>
+      <p class="trust-desc">Real people, real responses. Reach us directly — no bots, no runaround, ever.</p>
+    </a>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="steps-section">
+  <div class="section-header" style="text-align:center;">
+    <div class="section-eyebrow reveal" style="justify-content:center;">How It Works</div>
+    <h2 class="section-title reveal reveal-delay-1">Ordering is <em>Simple</em></h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step-item reveal reveal-delay-1">
+      <span class="step-number">01</span>
+      <div class="step-title">Choose Your Watch</div>
+      <p class="step-desc">Browse our curated collection and add your favourite piece to your cart.</p>
+    </div>
+    <div class="step-item reveal reveal-delay-2">
+      <span class="step-number">02</span>
+      <div class="step-title">Complete Checkout</div>
+      <p class="step-desc">Fill in your details and submit your order securely in minutes.</p>
+    </div>
+    <div class="step-item reveal reveal-delay-3">
+      <span class="step-number">03</span>
+      <div class="step-title">Receive Your Invoice</div>
+      <p class="step-desc">We'll send your invoice via email or text based on your checkout info.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="logo-name">Elite Time</span>
+      <p>Luxury-inspired timepieces for everyday moments. Clean design. Premium feel. Timeless presence.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul class="footer-links">
+        <li><a href="products.html">All Watches</a></li>
+        <li><a href="cart.html">Your Cart</a></li>
+        <li><a href="premium.html">Premium Quality</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul class="footer-links">
+        <li><a href="support.html">Contact Us</a></li>
+        <li><a href="shipping.html">Shipping Info</a></li>
+        <li><a href="secure.html">Secure Orders</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Elite Time. All rights reserved.</span>
+    <span class="footer-copy">Crafted with care.</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
